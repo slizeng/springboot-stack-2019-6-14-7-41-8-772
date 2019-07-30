@@ -2,6 +2,7 @@ package com.tw.apistackbase.service;
 
 import com.tw.apistackbase.dao.EmployeeDao;
 import com.tw.apistackbase.entity.Employee;
+import com.tw.apistackbase.entity.GENDER;
 import com.tw.apistackbase.exception.CannotAddEmployeeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,9 @@ public class EmployeeService {
 
     public List<Employee> getPagedEmployees(int page, int pageSize) {
         return employeeDao.getAll(page, pageSize);
+    }
+
+    public List<Employee> getEmployeesByGender(GENDER gender) {
+        return employeeDao.getAll(gender);
     }
 }

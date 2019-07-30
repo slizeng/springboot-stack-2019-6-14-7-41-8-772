@@ -3,12 +3,14 @@ package com.tw.apistackbase.dao;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.tw.apistackbase.entity.Employee;
+import com.tw.apistackbase.entity.GENDER;
 import com.tw.apistackbase.exception.EmployeeNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Component
 public class EmployeeDao {
@@ -40,5 +42,11 @@ public class EmployeeDao {
         }
 
         return pagedEmployees.get(page - 1);
+    }
+
+    public List<Employee> getAll(GENDER gender) {
+        return employeeRepository.stream()
+                .filter(employee -> employee.getGender().equals(gender))
+                .collect(Collectors.toList());
     }
 }

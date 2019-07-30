@@ -4,10 +4,10 @@ public class Employee {
     private int id;
     private String name;
     private int age;
-    private String gender;
+    private GENDER gender;
     private int salary;
 
-    public Employee(int id, String name, int age, String gender, int salary) {
+    public Employee(int id, String name, int age, GENDER gender, int salary) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -39,11 +39,11 @@ public class Employee {
         this.age = age;
     }
 
-    public String getGender() {
+    public GENDER getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(GENDER gender) {
         this.gender = gender;
     }
 

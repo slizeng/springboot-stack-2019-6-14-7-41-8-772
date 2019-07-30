@@ -1,7 +1,9 @@
 package com.tw.apistackbase.service;
 
+import com.google.common.collect.ImmutableList;
 import com.tw.apistackbase.dao.EmployeeDao;
 import com.tw.apistackbase.entity.Employee;
+import com.tw.apistackbase.entity.GENDER;
 import com.tw.apistackbase.exception.CannotAddEmployeeException;
 import com.tw.apistackbase.exception.EmployeeNotFoundException;
 import org.junit.Test;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.google.common.collect.ImmutableList.of;
+import static com.tw.apistackbase.entity.GENDER.male;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -25,7 +28,7 @@ public class EmployServiceTest {
     @Mock
     private EmployeeDao employeeDao;
 
-    private Employee employee = new Employee(1, "name", 18, "male", 10000);
+    private Employee employee = new Employee(1, "name", 18, male, 10000);
 
     @Test
     public void should_return_employees_as_list_when_get_all_employees_succeed() {
@@ -78,9 +81,9 @@ public class EmployServiceTest {
 
     @Test
     public void should_return_target_employees_when_query_employees_with_paging_succeed() {
-        Employee firstEmploy = new Employee(1, "first", 18, "male", 1000);
-        Employee secondEmploy = new Employee(2, "first", 18, "male", 1000);
-        Employee thirdEmploy = new Employee(3, "first", 18, "male", 1000);
+        Employee firstEmploy = new Employee(1, "first", 18, male, 1000);
+        Employee secondEmploy = new Employee(2, "first", 18, male, 1000);
+        Employee thirdEmploy = new Employee(3, "first", 18, male, 1000);
         List<Employee> firstPageEmployees = of(firstEmploy, secondEmploy);
         List<Employee> secondPageEmployees = of(thirdEmploy);
 
@@ -99,6 +102,16 @@ public class EmployServiceTest {
         when(employeeDao.getAll(2, 2)).thenThrow(new NoSuchElementException());
 
         assertThrows(NoSuchElementException.class, () -> employeeService.getPagedEmployees(2, 2));
+    }
+
+    @Test
+    public void should_return_filtered_employees_when_query_employee_by_gender() {
+        ImmutableList<Employee> expectedFilteredEmployees = of(employee);
+        when(employeeDao.getAll(male)).thenReturn(expectedFilteredEmployees);
+
+        List<Employee> returnEmployees = employeeService.getEmployeesByGender(male);
+
+        assertEquals(expectedFilteredEmployees, returnEmployees);
     }
 
 }
