@@ -2,6 +2,7 @@ package com.tw.apistackbase.controller;
 
 import com.google.common.collect.ImmutableList;
 import com.tw.apistackbase.dto.Company;
+import com.tw.apistackbase.dto.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,7 @@ import java.util.List;
 
 import static com.google.common.collect.ImmutableList.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 class CompanyControllerTest {
     private CompanyController companyController = new CompanyController();
@@ -50,5 +50,30 @@ class CompanyControllerTest {
 
         assertEquals(OK, result.getStatusCode());
         assertEquals(company, result.getBody());
+    }
+
+    @Test
+    void should_return_not_found_when_query_an_company_with_non_existing_id() {
+        ResponseEntity<Company> result = companyController.getCompanyById(2);
+
+        assertEquals(NOT_FOUND, result.getStatusCode());
+    }
+
+    @Test
+    void should_return_all_specific_employees_when_obtain_employees_under_a_specific_company() throws URISyntaxException {
+        List<Employee> employees = company.getEmployees();
+        companyController.addCompany(company);
+
+        ResponseEntity<List<Employee>> result = companyController.getEmployees(1);
+
+        assertEquals(OK, result.getStatusCode());
+        assertEquals(employees, result.getBody());
+    }
+
+    @Test
+    void should_return_not_found_when_obtain_employees_under_a_non_existing_company() {
+        ResponseEntity<List<Employee>> result = companyController.getEmployees(2);
+
+        assertEquals(NOT_FOUND, result.getStatusCode());
     }
 }
