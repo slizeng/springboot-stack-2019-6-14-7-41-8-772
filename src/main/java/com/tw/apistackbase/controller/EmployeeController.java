@@ -10,8 +10,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 import static java.util.Objects.nonNull;
@@ -33,19 +31,19 @@ public class EmployeeController {
                 .map(theGender -> employeeRepository.stream()
                         .filter(employee -> employee.getGender().equals(theGender))
                         .collect(toList())
-                ).orElseGet(() -> employeeRepository);
+                ).orElse(employeeRepository);
+
+        List<Employee> paginatedEmployees = filteredEmployees;
 
         if (nonNull(page) && nonNull(pageSize)) {
-            List<List<Employee>> pagedEmployees = Lists.partition(filteredEmployees, pageSize);
-
-            if (page > pagedEmployees.size()) {
+            try {
+                paginatedEmployees = paginate(filteredEmployees, page, pageSize);
+            } catch (Exception ignored) {
                 return ResponseEntity.badRequest().build();
             }
-
-            filteredEmployees = pagedEmployees.get(page - 1);
         }
 
-        return ResponseEntity.ok(filteredEmployees);
+        return ResponseEntity.ok(paginatedEmployees);
     }
 
     @GetMapping(path = "/{id}", produces = {"application/json"})
@@ -67,30 +65,35 @@ public class EmployeeController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<Employee> updateEmployeeById(@PathVariable int id,
                                                        @RequestBody Employee newEmployee) {
-        OptionalInt optionalIndex = IntStream.range(0, employeeRepository.size())
+
+        return IntStream.range(0, employeeRepository.size())
+                .boxed()
                 .filter(index -> employeeRepository.get(index).getId() == id)
-                .findFirst();
-
-        if (optionalIndex.isPresent()) {
-            employeeRepository.set(optionalIndex.getAsInt(), newEmployee);
-            return ResponseEntity.ok(newEmployee);
-        }
-
-        return ResponseEntity.notFound().build();
+                .findFirst()
+                .map(index -> {
+                    employeeRepository.set(index, newEmployee);
+                    return ResponseEntity.ok(newEmployee);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<Employee> deleteById(@PathVariable int id) {
-        Optional<Integer> optionalIndex = IntStream.range(0, employeeRepository.size())
+        return IntStream.range(0, employeeRepository.size())
                 .boxed()
                 .filter(index -> employeeRepository.get(index).getId() == id)
-                .findFirst();
+                .findFirst()
+                .map(index -> ResponseEntity.ok().body(employeeRepository.remove((int) index)))
+                .orElse(ResponseEntity.notFound().build());
+    }
 
-        if (optionalIndex.isPresent()) {
-            employeeRepository.remove((int) optionalIndex.get());
-            return ResponseEntity.ok().build();
+    private List<Employee> paginate(List<Employee> source, int page, int pageSize) {
+        List<List<Employee>> pagedEmployees = Lists.partition(source, pageSize);
+
+        if (page > pagedEmployees.size()) {
+            throw new RuntimeException();
         }
 
-        return ResponseEntity.notFound().build();
+        return pagedEmployees.get(page - 1);
     }
 }
