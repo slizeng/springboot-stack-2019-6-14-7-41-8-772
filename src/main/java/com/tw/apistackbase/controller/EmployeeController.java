@@ -8,7 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 import static java.util.Objects.nonNull;
@@ -35,7 +38,7 @@ public class EmployeeController {
         if (nonNull(page) && nonNull(pageSize)) {
             List<List<Employee>> pagedEmployees = Lists.partition(filteredEmployees, pageSize);
 
-            if (page >= pagedEmployees.size()) {
+            if (page > pagedEmployees.size()) {
                 return ResponseEntity.badRequest().build();
             }
 
@@ -46,7 +49,7 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/{id}", produces = {"application/json"})
-    public ResponseEntity<Employee> select(@PathVariable int id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable int id) {
         return employeeRepository.stream()
                 .filter(employee -> employee.getId() == id)
                 .findFirst()
@@ -55,14 +58,15 @@ public class EmployeeController {
     }
 
     @PostMapping()
-    public ResponseEntity<Employee> add(@RequestBody Employee employee) throws URISyntaxException {
+    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) throws URISyntaxException {
         employeeRepository.add(employee);
 
         return ResponseEntity.created(new URI("/employees")).body(employee);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<Employee> update(@PathVariable int id, @RequestBody Employee newEmployee) {
+    public ResponseEntity<Employee> updateEmployeeById(@PathVariable int id,
+                                                       @RequestBody Employee newEmployee) {
         OptionalInt optionalIndex = IntStream.range(0, employeeRepository.size())
                 .filter(index -> employeeRepository.get(index).getId() == id)
                 .findFirst();
@@ -70,6 +74,21 @@ public class EmployeeController {
         if (optionalIndex.isPresent()) {
             employeeRepository.set(optionalIndex.getAsInt(), newEmployee);
             return ResponseEntity.ok(newEmployee);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Employee> deleteById(@PathVariable int id) {
+        Optional<Integer> optionalIndex = IntStream.range(0, employeeRepository.size())
+                .boxed()
+                .filter(index -> employeeRepository.get(index).getId() == id)
+                .findFirst();
+
+        if (optionalIndex.isPresent()) {
+            employeeRepository.remove((int) optionalIndex.get());
+            return ResponseEntity.ok().build();
         }
 
         return ResponseEntity.notFound().build();
