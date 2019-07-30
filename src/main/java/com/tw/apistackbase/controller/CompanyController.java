@@ -51,6 +51,10 @@ public class CompanyController {
 
         List<List<Company>> pagedCompanies = Lists.partition(companies, pageSize);
 
+        if (page > companies.size()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok().body(pagedCompanies.get(page - 1));
     }
 
