@@ -1,8 +1,8 @@
 package com.tw.apistackbase.service;
 
-import com.tw.apistackbase.dao.EmployeeDao;
-import com.tw.apistackbase.entity.Employee;
-import com.tw.apistackbase.entity.GENDER;
+import com.tw.apistackbase.repository.EmployeeRepository;
+import com.tw.apistackbase.dto.Employee;
+import com.tw.apistackbase.dto.GENDER;
 import com.tw.apistackbase.exception.CannotAddEmployeeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,17 @@ import static java.util.Optional.ofNullable;
 @Service
 public class EmployeeService {
     @Autowired
-    EmployeeDao employeeDao;
+    EmployeeRepository employeeRepository;
 
     public List<Employee> getAllEmployees() {
-        return employeeDao.getAll();
+        return employeeRepository.selectAll();
     }
 
     public Employee addEmployee(Employee employee) {
         return ofNullable(employee)
                 .map(targetEmploy -> {
                     try {
-                        return employeeDao.add(targetEmploy);
+                        return employeeRepository.add(targetEmploy);
                     } catch (Exception ignored) {
                         return null;
                     }
@@ -33,14 +33,18 @@ public class EmployeeService {
     }
 
     public Employee getCertainEmployee(int id) {
-        return employeeDao.get(id);
+        return employeeRepository.select(id);
     }
 
     public List<Employee> getPagedEmployees(int page, int pageSize) {
-        return employeeDao.getAll(page, pageSize);
+        return employeeRepository.selectAll(page, pageSize);
     }
 
     public List<Employee> getEmployeesByGender(GENDER gender) {
-        return employeeDao.getAll(gender);
+        return employeeRepository.selectAll(gender);
+    }
+
+    public Employee updateEmploy(int id, Employee newEmployee) {
+        return employeeRepository.update(id, newEmployee);
     }
 }
