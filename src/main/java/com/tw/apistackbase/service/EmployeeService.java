@@ -34,4 +34,8 @@ public class EmployeeService {
     public Employee getCertainEmployee(int id) {
         return employeeDao.get(id);
     }
+
+    public List<Employee> getPagedEmployees(int page, int pageSize) {
+        return employeeDao.getAll(page, pageSize);
+    }
 }

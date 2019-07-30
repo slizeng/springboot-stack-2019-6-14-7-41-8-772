@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.google.common.collect.ImmutableList.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -75,5 +76,29 @@ public class EmployServiceTest {
         assertThrows(EmployeeNotFoundException.class, () -> employeeService.getCertainEmployee(2));
     }
 
+    @Test
+    public void should_return_target_employees_when_query_employees_with_paging_succeed() {
+        Employee firstEmploy = new Employee(1, "first", 18, "male", 1000);
+        Employee secondEmploy = new Employee(2, "first", 18, "male", 1000);
+        Employee thirdEmploy = new Employee(3, "first", 18, "male", 1000);
+        List<Employee> firstPageEmployees = of(firstEmploy, secondEmploy);
+        List<Employee> secondPageEmployees = of(thirdEmploy);
+
+        when(employeeDao.getAll(1, 2)).thenReturn(firstPageEmployees);
+        when(employeeDao.getAll(2, 2)).thenReturn(secondPageEmployees);
+
+        List<Employee> firstPageQueryResult = employeeService.getPagedEmployees(1, 2);
+        List<Employee> secondPageQueryResult = employeeService.getPagedEmployees(2, 2);
+
+        assertEquals(firstPageEmployees, firstPageQueryResult);
+        assertEquals(secondPageEmployees, secondPageQueryResult);
+    }
+
+    @Test
+    public void should_throws_NoSuchExceptions_when_query_paged_employees_and_page_is_exceed() {
+        when(employeeDao.getAll(2, 2)).thenThrow(new NoSuchElementException());
+
+        assertThrows(NoSuchElementException.class, () -> employeeService.getPagedEmployees(2, 2));
+    }
 
 }

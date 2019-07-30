@@ -1,12 +1,14 @@
 package com.tw.apistackbase.dao;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.tw.apistackbase.entity.Employee;
 import com.tw.apistackbase.exception.EmployeeNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Component
 public class EmployeeDao {
@@ -27,5 +29,16 @@ public class EmployeeDao {
                 .filter(employee -> employee.getId() == id)
                 .findFirst()
                 .orElseThrow(EmployeeNotFoundException::new);
+    }
+
+    public List<Employee> getAll(int page, int pageSize) {
+        List<Employee> employees = getAll();
+        List<List<Employee>> pagedEmployees = Lists.partition(employees, pageSize);
+
+        if (page > pagedEmployees.size()) {
+            throw new NoSuchElementException();
+        }
+
+        return pagedEmployees.get(page - 1);
     }
 }
