@@ -3,8 +3,7 @@ package com.tw.apistackbase.controller;
 import com.tw.apistackbase.dto.Company;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +21,15 @@ public class CompanyController {
         return ResponseEntity.ok(companies);
     }
 
-    public ResponseEntity<Company> addCompany(Company company) throws URISyntaxException {
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<Company> getCompanyById(@PathVariable int id) {
+        return null;
+    }
+
+    @PostMapping
+    public ResponseEntity<Company> addCompany(@RequestBody Company company) throws URISyntaxException {
+        companies.add(company);
+
         return ResponseEntity.created(new URI("/companies")).body(company);
     }
 }

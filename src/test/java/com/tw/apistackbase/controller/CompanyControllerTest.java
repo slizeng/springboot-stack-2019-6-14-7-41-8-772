@@ -20,7 +20,7 @@ class CompanyControllerTest {
 
     @BeforeEach
     void setUp() {
-        company = new Company();
+        company = new Company(1,"Ali");
     }
 
     @Test
@@ -29,6 +29,7 @@ class CompanyControllerTest {
 
         assertEquals(CREATED, result.getStatusCode());
         assertEquals(company, result.getBody());
+        assertEquals(1, companyController.getAll().getBody().size());
     }
 
     @Test
@@ -39,5 +40,15 @@ class CompanyControllerTest {
 
         assertEquals(OK, result.getStatusCode());
         assertEquals(expectedCompanies, result.getBody());
+    }
+
+    @Test
+    void should_return_specific_company_when_query_an_existing_company_by_id_succeed() throws URISyntaxException {
+        companyController.addCompany(company);
+
+        ResponseEntity<Company> result = companyController.getCompanyById(1);
+
+        assertEquals(OK, result.getStatusCode());
+        assertEquals(company, result.getBody());
     }
 }
