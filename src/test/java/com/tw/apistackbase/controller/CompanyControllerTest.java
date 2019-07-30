@@ -64,7 +64,7 @@ class CompanyControllerTest {
         List<Employee> employees = company.getEmployees();
         companyController.addCompany(company);
 
-        ResponseEntity<List<Employee>> result = companyController.getEmployees(1);
+        ResponseEntity<List<Employee>> result = companyController.getEmployees(company.getId());
 
         assertEquals(OK, result.getStatusCode());
         assertEquals(employees, result.getBody());
@@ -72,7 +72,7 @@ class CompanyControllerTest {
 
     @Test
     void should_return_not_found_when_obtain_employees_under_a_non_existing_company() {
-        ResponseEntity<List<Employee>> result = companyController.getEmployees(2);
+        ResponseEntity<List<Employee>> result = companyController.getEmployees(111);
 
         assertEquals(NOT_FOUND, result.getStatusCode());
     }
@@ -110,9 +110,19 @@ class CompanyControllerTest {
         Company newCompany = new Company();
         companyController.addCompany(company);
 
-        ResponseEntity<Company> result = companyController.updateCompany(1, newCompany);
+        ResponseEntity<Company> result = companyController.updateCompany(company.getId(), newCompany);
 
         assertEquals(OK, result.getStatusCode());
         assertEquals(newCompany, result.getBody());
+    }
+
+    @Test
+    void should_return_not_found_when_update_an_non_existing_company() throws URISyntaxException {
+        Company newCompany = new Company();
+        companyController.addCompany(company);
+
+        ResponseEntity<Company> result = companyController.updateCompany(111, newCompany);
+
+        assertEquals(NOT_FOUND, result.getStatusCode());
     }
 }
