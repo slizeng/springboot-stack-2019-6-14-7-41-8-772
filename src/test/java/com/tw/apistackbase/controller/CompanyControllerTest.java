@@ -106,8 +106,9 @@ class CompanyControllerTest {
     }
 
     @Test
-    void should_return_updated_company_when_update_an_existing_company_succeed() {
+    void should_return_updated_company_when_update_an_existing_company_succeed() throws URISyntaxException {
         Company newCompany = new Company();
+        companyController.addCompany(company);
 
         ResponseEntity<Company> result = companyController.updateCompany(1, newCompany);
 

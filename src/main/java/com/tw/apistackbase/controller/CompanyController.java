@@ -3,17 +3,16 @@ package com.tw.apistackbase.controller;
 import com.google.common.collect.Lists;
 import com.tw.apistackbase.dto.Company;
 import com.tw.apistackbase.dto.Employee;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.CacheRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping(path = "/companies", produces = "application/json")
@@ -60,15 +59,21 @@ public class CompanyController {
         return ResponseEntity.ok().body(pagedCompanies.get(page - 1));
     }
 
+    public ResponseEntity<Company> updateCompany(int id, Company newCompany) {
+        return IntStream.range(0, companies.size())
+                .boxed()
+                .filter(index -> companies.get(index).getId() == id)
+                .findFirst()
+                .map(index -> {
+                    companies.set(index, newCompany);
+                    return ResponseEntity.ok().body(newCompany);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     private Optional<Company> selectCompanyById(@PathVariable int id) {
         return companies.stream()
                 .filter(company -> company.getId() == id)
                 .findFirst();
-    }
-
-    public ResponseEntity<Company> updateCompany(int id, Company newCompany) {
-
-
-        return null;
     }
 }
