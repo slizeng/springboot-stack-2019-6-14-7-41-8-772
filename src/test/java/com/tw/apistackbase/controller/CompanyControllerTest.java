@@ -20,7 +20,8 @@ class CompanyControllerTest {
 
     @BeforeEach
     void setUp() {
-        company = new Company(1, "Ali");
+        company = new Company();
+        company.setId(1);
     }
 
     @Test

@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "companyName": "ali",
+    "employeeNumber": 2,
+    "employees": [
+      {
+        "id": 0,
+        "name": "Xiaoming",
+        "age": 20,
+        "gender": "male",
+        "salary": 18000
+      },
+      {
+        "id": 1,
+        "name": "Arthas",
+        "age": 23,
+        "gender": "female",
+        "salary": 11000
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "companyName": "BLZ",
+    "employeeNumber": 2,
+    "employees": [
+      {
+        "id": 0,
+        "name": "Rose",
+        "age": 20,
+        "gender": "male",
+        "salary": 18000
+      },
+      {
+        "id": 1,
+        "name": "Jack",
+        "age": 23,
+        "gender": "female",
+        "salary": 11000
+      }
+    ]
+  }
+]
