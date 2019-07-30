@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import static com.google.common.collect.ImmutableList.*;
+import static com.google.common.collect.ImmutableList.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.HttpStatus.*;
 
@@ -20,7 +20,7 @@ class CompanyControllerTest {
 
     @BeforeEach
     void setUp() {
-        company = new Company(1,"Ali");
+        company = new Company(1, "Ali");
     }
 
     @Test
@@ -36,7 +36,7 @@ class CompanyControllerTest {
     void should_return_empty_companies_info_when_get_all_companies_succeed() {
         ImmutableList<Company> expectedCompanies = of();
 
-        ResponseEntity<List<Company>>result = companyController.getAll();
+        ResponseEntity<List<Company>> result = companyController.getAll();
 
         assertEquals(OK, result.getStatusCode());
         assertEquals(expectedCompanies, result.getBody());
@@ -76,4 +76,24 @@ class CompanyControllerTest {
 
         assertEquals(NOT_FOUND, result.getStatusCode());
     }
+
+    @Test
+    void should_return_paged_companies_when_get_paged_companies_succeed() throws URISyntaxException {
+        Company firstCompany = new Company();
+        Company secondCompany = new Company();
+        Company thirdCompany = new Company();
+        companyController.addCompany(firstCompany);
+        companyController.addCompany(secondCompany);
+        companyController.addCompany(thirdCompany);
+
+        ResponseEntity<List<Company>> firstResult = companyController.getAllWithPagination(1, 2);
+        ResponseEntity<List<Company>> secondResult = companyController.getAllWithPagination(2, 2);
+
+        assertEquals(OK, firstResult.getStatusCode());
+        assertEquals(of(firstCompany, secondCompany), firstResult.getBody());
+
+        assertEquals(OK, secondResult.getStatusCode());
+        assertEquals(of(thirdCompany), secondResult.getBody());
+    }
+
 }

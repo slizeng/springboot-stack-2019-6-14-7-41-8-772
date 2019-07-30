@@ -1,5 +1,6 @@
 package com.tw.apistackbase.controller;
 
+import com.google.common.collect.Lists;
 import com.tw.apistackbase.dto.Company;
 import com.tw.apistackbase.dto.Employee;
 import org.springframework.http.ResponseEntity;
@@ -37,15 +38,25 @@ public class CompanyController {
         return ResponseEntity.created(new URI("/companies")).body(company);
     }
 
-    public ResponseEntity<List<Employee>> getEmployees(int id) {
+    @GetMapping(path = "/{id}/employees")
+    public ResponseEntity<List<Employee>> getEmployees(@PathVariable int id) {
         return selectCompanyById(id)
                 .map(company -> ResponseEntity.ok().body(company.getEmployees()))
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping
+    public ResponseEntity<List<Company>> getAllWithPagination(
+            @PathVariable Integer page, @PathVariable Integer pageSize) {
+
+        List<List<Company>> pagedCompanies = Lists.partition(companies, pageSize);
+
+        return ResponseEntity.ok().body(pagedCompanies.get(page - 1));
+    }
+
     private Optional<Company> selectCompanyById(@PathVariable int id) {
         return companies.stream()
-                .filter(company -> company.getId() ==id)
+                .filter(company -> company.getId() == id)
                 .findFirst();
     }
 }
