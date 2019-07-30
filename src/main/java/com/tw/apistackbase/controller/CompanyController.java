@@ -3,10 +3,12 @@ package com.tw.apistackbase.controller;
 import com.google.common.collect.Lists;
 import com.tw.apistackbase.dto.Company;
 import com.tw.apistackbase.dto.Employee;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.CacheRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -62,5 +64,11 @@ public class CompanyController {
         return companies.stream()
                 .filter(company -> company.getId() == id)
                 .findFirst();
+    }
+
+    public ResponseEntity<Company> updateCompany(int id, Company newCompany) {
+
+
+        return null;
     }
 }

@@ -104,4 +104,14 @@ class CompanyControllerTest {
 
         assertEquals(BAD_REQUEST, result.getStatusCode());
     }
+
+    @Test
+    void should_return_updated_company_when_update_an_existing_company_succeed() {
+        Company newCompany = new Company();
+
+        ResponseEntity<Company> result = companyController.updateCompany(1, newCompany);
+
+        assertEquals(OK, result.getStatusCode());
+        assertEquals(newCompany, result.getBody());
+    }
 }
