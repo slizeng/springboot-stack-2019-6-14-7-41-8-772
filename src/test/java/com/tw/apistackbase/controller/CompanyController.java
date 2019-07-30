@@ -23,7 +23,11 @@ public class CompanyController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<Company> getCompanyById(@PathVariable int id) {
-        return null;
+        return companies.stream()
+                .filter(company -> company.getId() ==id)
+                .findFirst()
+                .map(company -> ResponseEntity.ok().body(company))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping

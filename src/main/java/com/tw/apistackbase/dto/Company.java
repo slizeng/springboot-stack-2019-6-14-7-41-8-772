@@ -24,4 +24,36 @@ public class Company {
         this.name = name;
         this.employees = employees;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Object> getEmployees() {
+        return employees;
+    }
+
+    public int getEmployeeNumber() {
+        return employeeNumber;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmployees(List<Object> employees) {
+        this.employees = employees;
+    }
+
+    public void setEmployeeNumber(int employeeNumber) {
+        this.employeeNumber = employeeNumber;
+    }
 }
