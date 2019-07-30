@@ -76,4 +76,13 @@ public class CompanyController {
                 .filter(company -> company.getId() == id)
                 .findFirst();
     }
+
+    public ResponseEntity<Company> deleteCompany(int id) {
+        return IntStream.range(0, companies.size())
+                .boxed()
+                .filter(index -> companies.get(index).getId() == id)
+                .findFirst()
+                .map(index -> ResponseEntity.ok().body(companies.remove((int) index)))
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

@@ -125,4 +125,21 @@ class CompanyControllerTest {
 
         assertEquals(NOT_FOUND, result.getStatusCode());
     }
+    @Test
+    void should_return_success_when_delete_a_company_succeed() throws URISyntaxException {
+        companyController.addCompany(company);
+
+        assertEquals(OK, companyController.deleteCompany(company.getId()).getStatusCode());
+        assertEquals(0, companyController.getAll().getBody().size());
+    }
+
+    @Test
+    void should_return_not_found_when_delete_an_non_existing_company() throws URISyntaxException {
+        companyController.addCompany(company);
+
+        ResponseEntity<Company> result = companyController.deleteCompany(111);
+
+        assertEquals(NOT_FOUND, result.getStatusCode());
+        assertEquals(1, companyController.getAll().getBody().size());
+    }
 }
