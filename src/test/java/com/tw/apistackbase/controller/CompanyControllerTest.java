@@ -29,14 +29,14 @@ class CompanyControllerTest {
 
         assertEquals(CREATED, result.getStatusCode());
         assertEquals(company, result.getBody());
-        assertEquals(1, companyController.getAll().getBody().size());
+        assertEquals(1, companyController.getAll(null, null).getBody().size());
     }
 
     @Test
     void should_return_empty_companies_info_when_get_all_companies_succeed() {
         ImmutableList<Company> expectedCompanies = of();
 
-        ResponseEntity<List<Company>> result = companyController.getAll();
+        ResponseEntity<List<Company>> result = companyController.getAll(null, null);
 
         assertEquals(OK, result.getStatusCode());
         assertEquals(expectedCompanies, result.getBody());
@@ -86,8 +86,8 @@ class CompanyControllerTest {
         companyController.addCompany(secondCompany);
         companyController.addCompany(thirdCompany);
 
-        ResponseEntity<List<Company>> firstResult = companyController.getAllWithPagination(1, 2);
-        ResponseEntity<List<Company>> secondResult = companyController.getAllWithPagination(2, 2);
+        ResponseEntity<List<Company>> firstResult = companyController.getAll(1, 2);
+        ResponseEntity<List<Company>> secondResult = companyController.getAll(2, 2);
 
         assertEquals(OK, firstResult.getStatusCode());
         assertEquals(of(firstCompany, secondCompany), firstResult.getBody());
@@ -100,7 +100,7 @@ class CompanyControllerTest {
     void should_return_bad_request_when_get_paged_companies_but_page_is_exceed() throws URISyntaxException {
         companyController.addCompany(company);
 
-        ResponseEntity<List<Company>> result = companyController.getAllWithPagination(2, 1);
+        ResponseEntity<List<Company>> result = companyController.getAll(2, 1);
 
         assertEquals(BAD_REQUEST, result.getStatusCode());
     }
@@ -130,7 +130,7 @@ class CompanyControllerTest {
         companyController.addCompany(company);
 
         assertEquals(OK, companyController.deleteCompany(company.getId()).getStatusCode());
-        assertEquals(0, companyController.getAll().getBody().size());
+        assertEquals(0, companyController.getAll(null, null).getBody().size());
     }
 
     @Test
@@ -140,6 +140,6 @@ class CompanyControllerTest {
         ResponseEntity<Company> result = companyController.deleteCompany(111);
 
         assertEquals(NOT_FOUND, result.getStatusCode());
-        assertEquals(1, companyController.getAll().getBody().size());
+        assertEquals(1, companyController.getAll(null, null).getBody().size());
     }
 }

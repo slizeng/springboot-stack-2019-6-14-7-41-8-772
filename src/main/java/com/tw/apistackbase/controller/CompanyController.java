@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import static java.util.Objects.nonNull;
+
 @Controller
 @RequestMapping(path = "/companies", produces = "application/json")
 public class CompanyController {
@@ -21,7 +23,14 @@ public class CompanyController {
     private List<Company> companies = new ArrayList<>();
 
     @GetMapping
-    public ResponseEntity<List<Company>> getAll() {
+    public ResponseEntity<List<Company>> getAll(
+            @PathVariable(required = false) Integer page,
+            @PathVariable(required = false) Integer pageSize) {
+
+        if (nonNull(page) && nonNull(pageSize)) {
+            return getAllWithPagination(page, pageSize);
+        }
+
         return ResponseEntity.ok(companies);
     }
 
@@ -46,20 +55,8 @@ public class CompanyController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping
-    public ResponseEntity<List<Company>> getAllWithPagination(
-            @PathVariable Integer page, @PathVariable Integer pageSize) {
-
-        List<List<Company>> pagedCompanies = Lists.partition(companies, pageSize);
-
-        if (page > companies.size()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok().body(pagedCompanies.get(page - 1));
-    }
-
-    public ResponseEntity<Company> updateCompany(int id, Company newCompany) {
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<Company> updateCompany(@PathVariable int id, Company newCompany) {
         return IntStream.range(0, companies.size())
                 .boxed()
                 .filter(index -> companies.get(index).getId() == id)
@@ -71,18 +68,30 @@ public class CompanyController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    private Optional<Company> selectCompanyById(@PathVariable int id) {
-        return companies.stream()
-                .filter(company -> company.getId() == id)
-                .findFirst();
-    }
-
-    public ResponseEntity<Company> deleteCompany(int id) {
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Company> deleteCompany(@PathVariable int id) {
         return IntStream.range(0, companies.size())
                 .boxed()
                 .filter(index -> companies.get(index).getId() == id)
                 .findFirst()
                 .map(index -> ResponseEntity.ok().body(companies.remove((int) index)))
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    private ResponseEntity<List<Company>> getAllWithPagination(Integer page, Integer pageSize) {
+
+        List<List<Company>> pagedCompanies = Lists.partition(companies, pageSize);
+
+        if (page > companies.size()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().body(pagedCompanies.get(page - 1));
+    }
+
+    private Optional<Company> selectCompanyById(int id) {
+        return companies.stream()
+                .filter(company -> company.getId() == id)
+                .findFirst();
     }
 }
