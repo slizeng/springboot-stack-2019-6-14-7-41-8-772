@@ -96,4 +96,12 @@ class CompanyControllerTest {
         assertEquals(of(thirdCompany), secondResult.getBody());
     }
 
+    @Test
+    void should_return_bad_request_when_get_paged_companies_but_page_is_exceed() throws URISyntaxException {
+        companyController.addCompany(company);
+
+        ResponseEntity<List<Company>> result = companyController.getAllWithPagination(2, 1);
+
+        assertEquals(BAD_REQUEST, result.getStatusCode());
+    }
 }
