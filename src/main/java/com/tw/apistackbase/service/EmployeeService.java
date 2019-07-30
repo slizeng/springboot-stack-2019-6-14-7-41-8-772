@@ -30,4 +30,8 @@ public class EmployeeService {
                 })
                 .orElseThrow(CannotAddEmployeeException::new);
     }
+
+    public Employee getCertainEmployee(int id) {
+        return employeeDao.get(id);
+    }
 }
